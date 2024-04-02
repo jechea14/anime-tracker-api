@@ -1,39 +1,26 @@
 package com.example.animetracker.service;
 
+
 import com.example.animetracker.model.Anime;
-import com.example.animetracker.repository.AnimeRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class AnimeService {
+public interface AnimeService {
+    // save an anime
+    void createAnime(Anime anime);
 
-    private final AnimeRepository animeRepository;
+    // get all anime
+    List<Anime> getAllAnime();
 
-    public AnimeService(AnimeRepository animeRepository) {
-        this.animeRepository = animeRepository;
-    }
+    // get an anime
+    Optional<Anime> getAnime(Integer id);
+
+    // Update an anime
+    void updateAnime(Anime anime, Integer id);
+
+    // Delete an anime
+    void deleteAnimeById(Integer id);
 
 
-    public List<Anime> getAllAnime() {
-        return animeRepository.findAll();
-    }
-
-    public Optional<Anime> getAnime(Integer id) {
-        return animeRepository.findById(id);
-    }
-
-    public void createAnime(Anime anime) {
-        animeRepository.save(anime);
-    }
-
-    public void deleteAnime(Integer id) {
-        animeRepository.deleteById(id);
-    }
-
-    public void updateAnime(Anime anime, Integer id) {
-
-    }
 }
