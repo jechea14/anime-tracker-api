@@ -37,7 +37,7 @@ public class UserAnimeListController {
     // Add a new anime entry for a user
     @PostMapping("/{userId}/anime/{animeId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserAnimeList createUserListAnimeEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestBody AnimeListStatus animeListStatus) {
+    public UserAnimeList createUserListAnimeEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestBody String animeListStatus) {
         return userAnimeListService.createUserAnimeListEntry(userId, animeId, animeListStatus);
     }
 
@@ -45,7 +45,7 @@ public class UserAnimeListController {
     @PutMapping("/{userId}/anime/{animeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public UserAnimeList updateUserAnimeListEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestBody UserAnimeList updateData) {
-        return userAnimeListService.updateUserAnimeListEntry(userId, animeId, updateData);
+        return null;
     }
 
     // Delete an anime from the user's list

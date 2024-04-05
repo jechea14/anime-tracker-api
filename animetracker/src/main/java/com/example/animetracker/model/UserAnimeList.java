@@ -1,9 +1,7 @@
 package com.example.animetracker.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,16 @@ public class UserAnimeList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
-    private Integer animeId;
-    private AnimeListStatus animeListStatus;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "anime_id")
+    private Anime anime;
+
+    private String animeListStatus;
 }

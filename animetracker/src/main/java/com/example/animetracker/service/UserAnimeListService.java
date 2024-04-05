@@ -2,6 +2,7 @@ package com.example.animetracker.service;
 
 import com.example.animetracker.model.Anime;
 import com.example.animetracker.model.AnimeListStatus;
+import com.example.animetracker.model.User;
 import com.example.animetracker.model.UserAnimeList;
 
 import java.util.List;
@@ -12,11 +13,17 @@ public interface UserAnimeListService {
 
     Optional<UserAnimeList> getSpecificUserListAnime(Integer userId, Integer animeId);
 
-    UserAnimeList createUserAnimeListEntry(Integer userId, Integer animeId, AnimeListStatus animeListStatus);
+    UserAnimeList createUserAnimeListEntry(Integer userId, Integer animeId, String animeListStatus);
 
-    UserAnimeList updateUserAnimeListEntry(Integer userId, Integer animeId, UserAnimeList updateData);
+    void updateUserAnimeListEntry(Integer userId, Integer animeId, UserAnimeList updateData);
 
     void deleteUserAnimeListEntry(Integer userId, Integer animeId);
+
+    // Get users who have watched a specific anime
+    List<User> getUsersWhoWatchedAnime(Integer animeId);
+
+    // Get anime entries with a specific status for a user
+    List<UserAnimeList> getUserAnimeListByStatus(Integer userId, String status);
 //    // get all anime lists for all users
 //    List<UserAnimeList> getAllUserAnimeLists();
 //

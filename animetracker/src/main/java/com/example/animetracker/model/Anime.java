@@ -1,6 +1,8 @@
 package com.example.animetracker.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Data
@@ -23,6 +26,10 @@ public class Anime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "anime")
+    private List<UserAnimeList> userList;
 //    private LocalDate startDate;
 //    private LocalDate endDate;
 //    private Double rating;
