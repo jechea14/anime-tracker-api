@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -22,8 +23,7 @@ public class User {
     private String password;
     private String email;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "user")
-    private List<UserAnimeList> animeList;
+//    @OneToMany(mappedBy = "user")
+//    private Set<Anime> animeList;
 
 }

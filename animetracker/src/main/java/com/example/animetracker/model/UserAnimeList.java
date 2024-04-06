@@ -1,6 +1,7 @@
 package com.example.animetracker.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.example.animetracker.dto.AnimeDTO;
+import com.example.animetracker.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,15 +16,13 @@ public class UserAnimeList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "anime_id")
     private Anime anime;
 
-    private String animeListStatus;
+    private String watchStatus;
 }

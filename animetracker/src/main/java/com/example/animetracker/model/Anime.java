@@ -27,9 +27,9 @@ public class Anime {
     private Integer id;
     private String title;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "anime")
-    private List<UserAnimeList> userList;
+//    @JsonManagedReference
+//    @OneToMany(mappedBy = "anime")
+//    private List<UserAnimeList> userList;
 //    private LocalDate startDate;
 //    private LocalDate endDate;
 //    private Double rating;

@@ -1,6 +1,8 @@
 package com.example.animetracker.controller;
 
 
+import com.example.animetracker.dto.UserAnimeListDTO;
+import com.example.animetracker.dto.UserDTO;
 import com.example.animetracker.model.Anime;
 import com.example.animetracker.model.AnimeListStatus;
 import com.example.animetracker.model.UserAnimeList;
@@ -24,13 +26,13 @@ public class UserAnimeListController {
 
     // Get all anime for a specific user (userId)
     @GetMapping("/{userId}/anime")
-    public List<UserAnimeList> getUserListAllAnime(@PathVariable("userId") Integer userId) {
-        return userAnimeListService.getUserListAnime(userId);
+    public List<UserAnimeListDTO> getUserListAllAnime(@PathVariable("userId") Integer userId) {
+        return userAnimeListService.getUserAnimeList(userId);
     }
 
     // Get details of a specific anime (animeId) from the user's list (userId)
     @GetMapping("/{userId}/anime/{animeId}")
-    public Optional<UserAnimeList> getUserListSpecificAnime(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId) {
+    public Optional<UserAnimeListDTO> getUserListSpecificAnime(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId) {
         return userAnimeListService.getSpecificUserListAnime(userId, animeId);
     }
 
@@ -53,6 +55,16 @@ public class UserAnimeListController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserListAnimeEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId) {
         userAnimeListService.deleteUserAnimeListEntry(userId, animeId);
+    }
+
+    @GetMapping("/anime/{animeId}")
+    public List<UserDTO> getUsersWhoWatchedAnime(@PathVariable("animeId") Integer animeId) {
+        return userAnimeListService.getUsersWhoWatchedAnime(animeId);
+    }
+
+    @GetMapping("/{userId}/anime/status")
+    public List<UserAnimeListDTO> getUserAnimeListByStatus(@PathVariable("userId") Integer userId, @RequestParam(name = "animeListStatus") String status) {
+        return userAnimeListService.getUserAnimeListByStatus(userId, status);
     }
 
 }
