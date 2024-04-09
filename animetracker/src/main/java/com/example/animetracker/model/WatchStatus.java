@@ -1,7 +1,8 @@
 package com.example.animetracker.model;
 
-public enum AnimeListStatus {
-    NULL,
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public enum WatchStatus {
     PLAN_TO_WATCH,
     WATCHING,
     COMPLETED

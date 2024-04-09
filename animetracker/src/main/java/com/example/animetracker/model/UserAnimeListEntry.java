@@ -1,7 +1,5 @@
 package com.example.animetracker.model;
 
-import com.example.animetracker.dto.AnimeDTO;
-import com.example.animetracker.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class UserAnimeList {
+public class UserAnimeListEntry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -24,5 +22,6 @@ public class UserAnimeList {
     @JoinColumn(name = "anime_id")
     private Anime anime;
 
-    private String watchStatus;
+    @Enumerated(EnumType.STRING)
+    private WatchStatus watchStatus;
 }

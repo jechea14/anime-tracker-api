@@ -21,6 +21,12 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     public void createAnime(Anime anime) {
+        Optional<Anime> animeOptional = animeRepository.findByTitle(anime.getTitle());
+
+        if (animeOptional.isPresent()) {
+            throw new IllegalStateException("Anime already exists");
+        }
+
         animeRepository.save(anime);
     }
 
@@ -31,13 +37,14 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     public Optional<Anime> getAnime(Integer id) {
+        doesAnimeExist(id);
         return animeRepository.findById(id);
     }
 
     @Override
     public void updateAnime(Anime anime, Integer id) {
         Optional<Anime> animeOptional = animeRepository.findById(id);
-        if (!animeOptional.isPresent()) {
+        if (animeOptional.isEmpty()) {
             throw new IllegalStateException("Anime with id " + id + " does not exist");
         }
 
@@ -46,6 +53,15 @@ public class AnimeServiceImpl implements AnimeService {
 
     @Override
     public void deleteAnimeById(Integer id) {
+        doesAnimeExist(id);
         animeRepository.deleteById(id);
+    }
+
+    private void doesAnimeExist(Integer animeId) {
+        Optional<Anime> animeOptional = animeRepository.findById(animeId);
+
+        if (animeOptional.isEmpty()) {
+            throw new IllegalStateException("Anime with id " + animeId + " does not exist");
+        }
     }
 }
