@@ -21,28 +21,33 @@ public class AnimeController {
         this.animeService = animeService;
     }
 
+    // Get all anime
     @GetMapping("")
     public List<Anime> getAllAnime() {
         return animeService.getAllAnime();
     }
 
+    // Get anime
     @GetMapping("/{id}")
     public Optional<Anime> getAnime(@PathVariable("id") Integer id) {
         return animeService.getAnime(id);
     }
 
+    // Create anime
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public void createAnime(@RequestBody Anime anime) {
         animeService.createAnime(anime);
     }
 
+    // Update anime
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{id}")
     public void updateAnime(@RequestBody Anime anime, @PathVariable("id") Integer id) {
         animeService.updateAnime(anime, id);
     }
 
+    // Delete anime
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteAnime(@PathVariable("id") Integer id) {
