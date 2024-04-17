@@ -1,22 +1,26 @@
 package com.example.animetracker.service.impl;
 
 import com.example.animetracker.model.Anime;
+import com.example.animetracker.model.Genre;
 import com.example.animetracker.repository.AnimeRepository;
+import com.example.animetracker.repository.GenreRepository;
 import com.example.animetracker.service.AnimeService;
+import com.example.animetracker.service.GenreService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Qualifier(value = "postgresAnimeService")
 public class AnimeServiceImpl implements AnimeService {
 
     private final AnimeRepository animeRepository;
+    private final GenreRepository genreRepository;
 
-    public AnimeServiceImpl(AnimeRepository animeRepository) {
+    public AnimeServiceImpl(AnimeRepository animeRepository, GenreRepository genreRepository) {
         this.animeRepository = animeRepository;
+        this.genreRepository = genreRepository;
     }
 
     // Create anime
@@ -28,6 +32,14 @@ public class AnimeServiceImpl implements AnimeService {
             throw new IllegalStateException("Anime already exists");
         }
 
+        Set<Genre> genres = new HashSet<>();
+        for (Genre genre : anime.getGenres()) {
+            Optional<Genre> managedGenre = genreRepository.findById(genre.getId());
+            if (managedGenre.isPresent()) {
+                genres.add(managedGenre.get());
+            }
+        }
+        anime.setGenres(genres);
         animeRepository.save(anime);
     }
 
@@ -50,7 +62,18 @@ public class AnimeServiceImpl implements AnimeService {
         Anime animeOptional = animeRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Anime with id " + id + " does not exist"));
 
-        animeOptional.setTitle(anime.getTitle());
+        if (anime.getTitle() != null) {
+            animeOptional.setTitle(anime.getTitle());
+        }
+
+        if (anime.getGenres() != null) {
+            animeOptional.setGenres(anime.getGenres());
+        }
+
+        if (anime.getEpisodeCount() != null) {
+            animeOptional.setEpisodeCount(anime.getEpisodeCount());
+        }
+
         animeRepository.save(animeOptional);
     }
 

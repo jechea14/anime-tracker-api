@@ -6,6 +6,7 @@ import com.example.animetracker.model.UserAnimeListEntry;
 import com.example.animetracker.model.WatchStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserAnimeListEntryService {
     // Gets and returns a list of anime of a specific user
@@ -15,10 +16,10 @@ public interface UserAnimeListEntryService {
     UserAnimeListEntryDTO getSpecificUserListAnime(Integer userId, Integer animeId);
 
     // Creates an anime entry from a specific user
-    UserAnimeListEntry createUserAnimeListEntry(Integer userId, Integer animeId, WatchStatus watchStatus);
+    UserAnimeListEntry createUserAnimeListEntry(Integer userId, Integer animeId, UserAnimeListEntry userAnimeListEntry);
 
     // Updates an anime entry from a specific user
-    void updateUserAnimeListEntry(Integer userId, Integer animeId, WatchStatus status);
+    void updateUserAnimeListEntry(Integer userId, Integer animeId, UserAnimeListEntry userAnimeListEntry);
 
     // Deletes an anime entry from a specific user
     void deleteUserAnimeListEntry(Integer userId, Integer animeId);
@@ -27,6 +28,6 @@ public interface UserAnimeListEntryService {
     List<UserDTO> getUsersWhoWatchedAnime(Integer animeId);
 
     // Get anime entries with a specific status for a user
-    List<UserAnimeListEntryDTO> getUserAnimeListByStatus(Integer userId, WatchStatus status);
+    List<UserAnimeListEntryDTO> getUserAnimeListByStatus(Integer userId, String status);
 
 }

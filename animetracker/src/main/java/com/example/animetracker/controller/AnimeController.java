@@ -54,7 +54,4 @@ public class AnimeController {
         animeService.deleteAnimeById(id);
     }
 
-    private URI getLocation(Integer id) {
-        return ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(id).toUri();
-    }
 }

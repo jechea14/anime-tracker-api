@@ -1,5 +1,6 @@
 package com.example.animetracker.service.impl;
 
+import com.example.animetracker.dto.AnimeDTO;
 import com.example.animetracker.dto.UserAnimeListEntryDTO;
 import com.example.animetracker.dto.UserDTO;
 import com.example.animetracker.model.Anime;
@@ -45,8 +46,9 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
 
         return userAnimeListEntryRepository.findByUser(user).stream().map(userAnimeListEntry -> new UserAnimeListEntryDTO(
                 userAnimeListEntry.getId(),
-                userAnimeListEntry.getAnime(),
-                userAnimeListEntry.getWatchStatus()
+                new AnimeDTO(userAnimeListEntry.getAnime().getId(), userAnimeListEntry.getAnime().getTitle()),
+                userAnimeListEntry.getWatchStatus(),
+                userAnimeListEntry.getEpisodesCompleted()
         )).toList();
 
     }
@@ -64,7 +66,14 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
         User user = userOptional.get();
         Anime anime = animeOptional.get();
         Optional<UserAnimeListEntry> userAnimeListOptional = userAnimeListEntryRepository.findByUserAndAnime(user, anime);
-        return new UserAnimeListEntryDTO(userAnimeListOptional.get().getId(), userAnimeListOptional.get().getAnime(), userAnimeListOptional.get().getWatchStatus());
+        UserAnimeListEntry userAnimeListEntry = userAnimeListOptional.get();
+
+        return new UserAnimeListEntryDTO(
+                userAnimeListEntry.getId(),
+                new AnimeDTO(userAnimeListOptional.get().getAnime().getId(), userAnimeListOptional.get().getAnime().getTitle()),
+                userAnimeListOptional.get().getWatchStatus(),
+                userAnimeListOptional.get().getEpisodesCompleted()
+        );
 
 //                    .stream().map(userAnimeList -> new UserAnimeListDTO(
 //                    userAnimeList.getId(),
@@ -76,7 +85,9 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
 
     // Add a new anime entry for a user
     @Override
-    public UserAnimeListEntry createUserAnimeListEntry(Integer userId, Integer animeId, WatchStatus watchStatus) {
+    public UserAnimeListEntry createUserAnimeListEntry(Integer userId, Integer animeId, UserAnimeListEntry entry) {
+        Integer episodes = entry.getEpisodesCompleted();
+
         // Fetch user and anime objects using their repositories
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Anime> animeOptional = animeRepository.findById(animeId);
@@ -89,16 +100,22 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
         User user = userOptional.get();
         Anime anime = animeOptional.get();
 
+        if (episodes > anime.getEpisodeCount() || entry.getWatchStatus().equals("completed")) {
+            episodes = anime.getEpisodeCount();
+        }
+
         Optional<UserAnimeListEntry> userAnimeListOptional = userAnimeListEntryRepository.findByUserAndAnime(user, anime);
 
         if (userAnimeListOptional.isPresent()) {
             throw new EntityNotFoundException("Entry already exists.");
         }
+
         // Create a new UserAnimeList object
         UserAnimeListEntry userAnimeListEntry = new UserAnimeListEntry();
         userAnimeListEntry.setAnime(animeOptional.get());
-        userAnimeListEntry.setWatchStatus(watchStatus);
+        userAnimeListEntry.setWatchStatus(entry.getWatchStatus());
         userAnimeListEntry.setUser(userOptional.get());
+        userAnimeListEntry.setEpisodesCompleted(episodes);
 
         // Save the UserAnimeList entry
         return userAnimeListEntryRepository.save(userAnimeListEntry);
@@ -106,7 +123,7 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
 
     // Update details of an anime in the user's list
     @Override
-    public void updateUserAnimeListEntry(Integer userId, Integer animeId, WatchStatus status) {
+    public void updateUserAnimeListEntry(Integer userId, Integer animeId, UserAnimeListEntry entry) {
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Anime> animeOptional = animeRepository.findById(animeId);
 
@@ -117,6 +134,7 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
         User user = userOptional.get();
         Anime anime = animeOptional.get();
 
+
         Optional<UserAnimeListEntry> userAnimeListOptional = userAnimeListEntryRepository.findByUserAndAnime(user, anime);
 
         if (userAnimeListOptional.isEmpty()) {
@@ -124,7 +142,17 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
         }
 
         UserAnimeListEntry userAnimeListEntry = userAnimeListOptional.get();
-        userAnimeListEntry.setWatchStatus(status);
+
+        userAnimeListEntry.setEpisodesCompleted(entry.getEpisodesCompleted());
+
+        if (entry.getEpisodesCompleted() > anime.getEpisodeCount()) {
+            userAnimeListEntry.setEpisodesCompleted(anime.getEpisodeCount());
+        }
+
+        if (entry.getEpisodesCompleted() < 0) {
+            userAnimeListEntry.setEpisodesCompleted(0);
+        }
+        userAnimeListEntry.setWatchStatus(entry.getWatchStatus());
         userAnimeListEntryRepository.save(userAnimeListEntry);
     }
 
@@ -167,7 +195,7 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
     }
 
     @Override
-    public List<UserAnimeListEntryDTO> getUserAnimeListByStatus(Integer userId, WatchStatus status) {
+    public List<UserAnimeListEntryDTO> getUserAnimeListByStatus(Integer userId, String status) {
         Optional<User> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
@@ -178,8 +206,9 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
 
         return userAnimeListEntryRepository.findByUser(user).stream().map(userAnimeListEntry -> new UserAnimeListEntryDTO(
                 userAnimeListEntry.getId(),
-                userAnimeListEntry.getAnime(),
-                status
+                new AnimeDTO(userAnimeListEntry.getAnime().getId(), userAnimeListEntry.getAnime().getTitle()),
+                status,
+                userAnimeListEntry.getEpisodesCompleted()
         )).toList();
 
     }

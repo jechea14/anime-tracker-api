@@ -7,9 +7,10 @@ import jakarta.persistence.Enumerated;
 
 public record UserAnimeListEntryDTO(
         Integer id,
-        Anime anime,
-        @Enumerated(EnumType.STRING)
-        WatchStatus watchStatus
+        AnimeDTO anime,
+
+        String watchStatus,
+        Integer episodesCompleted
 ) {
 
 }

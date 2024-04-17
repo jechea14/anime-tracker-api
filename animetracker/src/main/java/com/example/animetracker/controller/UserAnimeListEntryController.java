@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -37,15 +38,15 @@ public class UserAnimeListEntryController {
     // Add a new anime entry for a user
     @PostMapping("/{userId}/anime/{animeId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserAnimeListEntry createUserListAnimeEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestParam("watchStatus") WatchStatus watchStatus) {
-        return userAnimeListEntryService.createUserAnimeListEntry(userId, animeId, watchStatus);
+    public UserAnimeListEntry createUserListAnimeEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestBody UserAnimeListEntry entry) {
+        return userAnimeListEntryService.createUserAnimeListEntry(userId, animeId, entry);
     }
 
     // Update details of an anime in the user's list
     @PutMapping("/{userId}/anime/{animeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUserAnimeListEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestParam("watchStatus") WatchStatus watchStatus) {
-        userAnimeListEntryService.updateUserAnimeListEntry(userId, animeId, watchStatus);
+    public void updateUserAnimeListEntry(@PathVariable("userId") Integer userId, @PathVariable("animeId") Integer animeId, @RequestBody UserAnimeListEntry entry) {
+        userAnimeListEntryService.updateUserAnimeListEntry(userId, animeId, entry);
     }
 
     // Delete an anime from the user's list
@@ -61,7 +62,7 @@ public class UserAnimeListEntryController {
     }
 
     @GetMapping("/{userId}/anime/status")
-    public List<UserAnimeListEntryDTO> getUserAnimeListByStatus(@PathVariable("userId") Integer userId, @RequestParam("watchStatus") WatchStatus status) {
+    public List<UserAnimeListEntryDTO> getUserAnimeListByStatus(@PathVariable("userId") Integer userId, @RequestBody String status) {
         return userAnimeListEntryService.getUserAnimeListByStatus(userId, status);
     }
 

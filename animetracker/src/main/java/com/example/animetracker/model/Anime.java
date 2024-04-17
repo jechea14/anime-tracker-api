@@ -14,26 +14,33 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table
+@Table(name="Anime")
 public class Anime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
+    private Integer episodeCount;
 
-//    @JsonManagedReference
-//    @OneToMany(mappedBy = "anime")
-//    private List<UserAnimeList> userList;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)  // Optional for persisting changes to genres
+    @JoinTable(name = "anime_genre",  // Name of the join table
+            joinColumns = @JoinColumn(name = "anime_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    private Set<Genre> genres;
+
+
 //    private LocalDate startDate;
 //    private LocalDate endDate;
 //    private Double rating;
 //    private Integer numOfScoringUsers;
-//    private String genre;
+
 
 }

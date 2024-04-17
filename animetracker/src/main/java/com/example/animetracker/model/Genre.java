@@ -5,25 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class UserAnimeListEntry {
+
+public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "anime_id")
-    private Anime anime;
-
-
-    private String watchStatus;
-
-    private Integer episodesCompleted;
+//    @ManyToMany
+//    private List<Anime> anime;
 }
