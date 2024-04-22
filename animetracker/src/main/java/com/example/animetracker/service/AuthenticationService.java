@@ -1,4 +1,4 @@
-package com.example.animetracker.security;
+package com.example.animetracker.service;
 
 import com.example.animetracker.dto.LoginResponseDTO;
 import com.example.animetracker.model.ApplicationUser;

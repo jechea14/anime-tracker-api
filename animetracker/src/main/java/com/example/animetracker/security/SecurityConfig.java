@@ -10,6 +10,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -49,8 +50,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/**").permitAll();
-                    auth.requestMatchers("/admin/**").hasRole("ADMIN");
-                    auth.requestMatchers("/user/**").hasAnyRole("ADMIN", "USER");
+                    auth.requestMatchers(
+                            HttpMethod.GET,
+                            "/api/v1/anime/**",
+                            "/api/v1/genres/**")
+                            .permitAll();
+                    auth.requestMatchers(
+                            "/admin/**",
+                            "/api/v1/users/**",
+                            "/api/v1/anime/**",
+                            "/api/v1/genres/**")
+                            .hasRole("ADMIN");
+                    auth.requestMatchers("/api/v1/animelist/**").hasAnyRole("USER", "ADMIN");
                     auth.anyRequest().authenticated();
                 });
 
