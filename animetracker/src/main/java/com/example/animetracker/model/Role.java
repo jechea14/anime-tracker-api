@@ -1,32 +1,40 @@
 package com.example.animetracker.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity //model want to persist in db
-@Table(name = "roles") //optional anno, names the table however we want
+@Setter
+@Getter
+@Entity
+@Table(name="roles")
 public class Role implements GrantedAuthority {
 
-    @Id //primary key
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "role_id") //optional, usually used to add restrictions
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="role_id")
     private Integer roleId;
 
     private String authority;
 
-    public Role(String role) {
-        this.authority = role;
+    public Role(){
+        super();
+    }
+
+    public Role(String authority){
+        this.authority = authority;
+    }
+
+    public Role(Integer roleId, String authority){
+        this.roleId = roleId;
+        this.authority = authority;
     }
 
     @Override
     public String getAuthority() {
+        // TODO Auto-generated method stub
         return this.authority;
     }
+
 }
 

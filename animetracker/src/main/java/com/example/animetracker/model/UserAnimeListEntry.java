@@ -16,7 +16,7 @@ public class UserAnimeListEntry {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private ApplicationUser applicationUser;
 
     @ManyToOne
     @JoinColumn(name = "anime_id")
