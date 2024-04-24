@@ -25,7 +25,7 @@ public interface UserAnimeListEntryService {
     UserAnimeListEntry createUserAnimeListEntry(Integer animeId, UserAnimeListEntry userAnimeListEntry);
 
     // Updates an anime entry from a specific user
-    void updateUserAnimeListEntry(Integer animeId, UserAnimeListEntry userAnimeListEntry);
+    UserAnimeListEntryDTO updateUserAnimeListEntry(Integer animeId, UserAnimeListEntry userAnimeListEntry);
 
     // Deletes an anime entry from a specific user
     void deleteUserAnimeListEntry(Integer animeId);

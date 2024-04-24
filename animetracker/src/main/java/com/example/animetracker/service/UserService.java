@@ -42,17 +42,13 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(Integer id) {
-        doesUserExist(id);
-
-        userRepository.deleteById(id);
-    }
-
-    private void doesUserExist(Integer userId) {
-        Optional<ApplicationUser> userOptional = userRepository.findById(userId);
+        Optional<ApplicationUser> userOptional = userRepository.findById(id);
 
         if (userOptional.isEmpty()) {
             throw new EntityNotFoundException("User not found");
         }
+
+        userRepository.deleteById(id);
     }
 
     @Override
