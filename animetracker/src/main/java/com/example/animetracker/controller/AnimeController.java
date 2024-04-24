@@ -1,5 +1,6 @@
 package com.example.animetracker.controller;
 
+import com.example.animetracker.dto.AnimePagination;
 import com.example.animetracker.model.Anime;
 import com.example.animetracker.service.AnimeService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,11 +25,16 @@ public class AnimeController {
 
     // Get all anime
     @GetMapping("")
-    public List<Anime> getAllAnime() {
-        return animeService.getAllAnime();
+    public AnimePagination getAllAnime(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) Integer pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize) {
+        return animeService.getAllAnime(pageNo, pageSize);
     }
+//    public List<Anime> getAllAnime() {
+//        return animeService.getAllAnime();
+//    }
 
-    // Get anime
+    // Get an anime
     @GetMapping("/{id}")
     public Optional<Anime> getAnime(@PathVariable("id") Integer id) {
         return animeService.getAnime(id);
@@ -42,14 +48,14 @@ public class AnimeController {
     }
 
     // Update anime
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}")
     public void updateAnime(@RequestBody Anime anime, @PathVariable("id") Integer id) {
         animeService.updateAnime(anime, id);
     }
 
     // Delete anime
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}")
     public void deleteAnime(@PathVariable("id") Integer id) {
         animeService.deleteAnimeById(id);

@@ -2,6 +2,7 @@ package com.example.animetracker.controller;
 
 
 import com.example.animetracker.dto.UserAnimeListEntryDTO;
+import com.example.animetracker.dto.UserAnimeListEntryPagination;
 import com.example.animetracker.dto.UserDTO;
 import com.example.animetracker.model.UserAnimeListEntry;
 import com.example.animetracker.model.WatchStatus;
@@ -25,8 +26,11 @@ public class UserAnimeListEntryController {
 
     // Get all anime for a specific user (userId)
     @GetMapping("")
-    public List<UserAnimeListEntryDTO> getUserListAllAnime() {
-        return userAnimeListEntryService.getUserAnimeList();
+    public UserAnimeListEntryPagination getUserListAllAnime(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) Integer pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "15", required = false) Integer pageSize
+    ) {
+        return userAnimeListEntryService.getAllUserAnimeListEntries(pageNo, pageSize);
     }
 
     // Get details of a specific anime (animeId) from the user's list (userId)
@@ -44,14 +48,14 @@ public class UserAnimeListEntryController {
 
     // Update details of an anime in the user's list
     @PutMapping("/{animeId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void updateUserAnimeListEntry(@PathVariable("animeId") Integer animeId, @RequestBody UserAnimeListEntry entry) {
         userAnimeListEntryService.updateUserAnimeListEntry(animeId, entry);
     }
 
     // Delete an anime from the user's list
     @DeleteMapping("/{animeId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteUserListAnimeEntry(@PathVariable("animeId") Integer animeId) {
         userAnimeListEntryService.deleteUserAnimeListEntry(animeId);
     }

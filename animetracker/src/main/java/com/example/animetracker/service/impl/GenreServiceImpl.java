@@ -34,7 +34,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public void createGenre(Genre genre) {
+    public Genre createGenre(Genre genre) {
         Optional<Genre> genreOptional = genreRepository.findByName(genre.getName());
 
         if (genreOptional.isPresent()) {
@@ -42,11 +42,12 @@ public class GenreServiceImpl implements GenreService {
         }
 
         genreRepository.save(genre);
+        return genre;
 
     }
 
     @Override
-    public void updateGenre(Integer id, Genre genre) {
+    public Genre updateGenre(Integer id, Genre genre) {
         Optional<Genre> genreOptional = genreRepository.findById(id);
 
         if (genreOptional.isEmpty()) {
@@ -56,7 +57,7 @@ public class GenreServiceImpl implements GenreService {
         Genre g = genreOptional.get();
         g.setName(genre.getName());
         genreRepository.save(g);
-
+        return g;
     }
 
     @Override

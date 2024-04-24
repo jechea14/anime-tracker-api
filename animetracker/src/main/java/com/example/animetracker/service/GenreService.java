@@ -13,10 +13,10 @@ public interface GenreService {
     Genre getGenre(Integer id);
 
     // Create genre
-    void createGenre(Genre genre);
+    Genre createGenre(Genre genre);
 
     // Update genre
-    void updateGenre(Integer id, Genre genre);
+    Genre updateGenre(Integer id, Genre genre);
 
     // Delete genre
     void deleteGenre(Integer id);

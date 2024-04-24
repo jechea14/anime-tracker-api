@@ -1,12 +1,18 @@
 package com.example.animetracker.service.impl;
 
+import com.example.animetracker.dto.AnimePagination;
 import com.example.animetracker.model.Anime;
 import com.example.animetracker.model.Genre;
 import com.example.animetracker.repository.AnimeRepository;
 import com.example.animetracker.repository.GenreRepository;
 import com.example.animetracker.service.AnimeService;
 import com.example.animetracker.service.GenreService;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,11 +31,11 @@ public class AnimeServiceImpl implements AnimeService {
 
     // Create anime
     @Override
-    public void createAnime(Anime anime) {
+    public Anime createAnime(Anime anime) {
         Optional<Anime> animeOptional = animeRepository.findByTitle(anime.getTitle());
 
         if (animeOptional.isPresent()) {
-            throw new IllegalStateException("Anime already exists");
+            throw new EntityExistsException("Anime already exists");
         }
 
         Set<Genre> genres = new HashSet<>();
@@ -41,26 +47,49 @@ public class AnimeServiceImpl implements AnimeService {
         }
         anime.setGenres(genres);
         animeRepository.save(anime);
+        return anime;
     }
 
     // Get all anime
+//    @Override
+//    public List<Anime> getAllAnime() {
+//        return animeRepository.findAll();
+//    }
+
+    // Get all paginated anime
     @Override
-    public List<Anime> getAllAnime() {
-        return animeRepository.findAll();
+    public AnimePagination getAllAnime(Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Anime> animes = animeRepository.findAll(pageable);
+        List<Anime> listOfAnimes = animes.getContent();
+
+        AnimePagination animePagination = new AnimePagination();
+        animePagination.setContent(listOfAnimes);
+        animePagination.setPageNo(animes.getNumber());
+        animePagination.setPageSize(animes.getSize());
+        animePagination.setTotalElements(animes.getTotalElements());
+        animePagination.setTotalPages(animes.getTotalPages());
+        animePagination.setLast(animes.isLast());
+
+        return animePagination;
     }
 
     // Get anime
     @Override
     public Optional<Anime> getAnime(Integer id) {
-        doesAnimeExist(id);
+        Optional<Anime> animeOptional = animeRepository.findById(id);
+        if (animeOptional.isEmpty()) {
+            throw new EntityNotFoundException("Anime with id" + id + " does not exist");
+        }
+
         return animeRepository.findById(id);
     }
 
     // Update anime
     @Override
-    public void updateAnime(Anime anime, Integer id) {
+    public Anime updateAnime(Anime anime, Integer id) {
         Anime animeOptional = animeRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Anime with id " + id + " does not exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Anime with id " + id + " does not exist"));
 
         if (anime.getTitle() != null) {
             animeOptional.setTitle(anime.getTitle());
@@ -75,20 +104,17 @@ public class AnimeServiceImpl implements AnimeService {
         }
 
         animeRepository.save(animeOptional);
+        return animeOptional;
     }
 
     // Delete anime
     @Override
     public void deleteAnimeById(Integer id) {
-        doesAnimeExist(id);
+        Optional<Anime> animeOptional = animeRepository.findById(id);
+        if (animeOptional.isEmpty()) {
+            throw new EntityNotFoundException("Anime with id" + id + " does not exist");
+        }
         animeRepository.deleteById(id);
     }
 
-    // Helper method
-    private void doesAnimeExist(Integer animeId) {
-        boolean exists = animeRepository.existsById(animeId);
-        if (!exists) {
-            throw new IllegalStateException("Anime with id " + animeId + " does not exist");
-        }
-    }
 }

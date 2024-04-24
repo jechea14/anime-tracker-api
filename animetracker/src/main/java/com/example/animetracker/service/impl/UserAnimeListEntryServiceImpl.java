@@ -2,6 +2,7 @@ package com.example.animetracker.service.impl;
 
 import com.example.animetracker.dto.AnimeDTO;
 import com.example.animetracker.dto.UserAnimeListEntryDTO;
+import com.example.animetracker.dto.UserAnimeListEntryPagination;
 import com.example.animetracker.dto.UserDTO;
 import com.example.animetracker.model.Anime;
 import com.example.animetracker.model.ApplicationUser;
@@ -13,10 +14,14 @@ import com.example.animetracker.service.UserAnimeListEntryService;
 import com.example.animetracker.utils.SecurityUtility;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Qualifier(value = "postgresUserAnimeListService")
@@ -33,8 +38,31 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
     }
 
     // Get all anime for a specific user (userId)
+//    @Override
+//    public List<UserAnimeListEntryDTO> getUserAnimeList() {
+//
+//        String username = SecurityUtility.getSessionUser();
+//        // Fetch user from user repository
+//        Optional<ApplicationUser> userOptional = userRepository.findByUsername(username);
+//
+//        if (userOptional.isEmpty()) {
+//            throw new EntityNotFoundException("User not found");
+//        }
+//
+//        ApplicationUser applicationUser = userOptional.get();
+//
+//        return userAnimeListEntryRepository.findByApplicationUser(applicationUser).stream().map(userAnimeListEntry -> new UserAnimeListEntryDTO(
+//                userAnimeListEntry.getId(),
+//                new AnimeDTO(userAnimeListEntry.getAnime().getTitle()),
+//                userAnimeListEntry.getWatchStatus(),
+//                userAnimeListEntry.getEpisodesCompleted()
+//        )).toList();
+//
+//    }
+
+    // Get all user anime list entries with pagination
     @Override
-    public List<UserAnimeListEntryDTO> getUserAnimeList() {
+    public UserAnimeListEntryPagination getAllUserAnimeListEntries(Integer pageNo, Integer pageSize) {
 
         String username = SecurityUtility.getSessionUser();
         // Fetch user from user repository
@@ -46,13 +74,31 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
 
         ApplicationUser applicationUser = userOptional.get();
 
-        return userAnimeListEntryRepository.findByApplicationUser(applicationUser).stream().map(userAnimeListEntry -> new UserAnimeListEntryDTO(
-                userAnimeListEntry.getId(),
-                new AnimeDTO(userAnimeListEntry.getAnime().getId(), userAnimeListEntry.getAnime().getTitle()),
-                userAnimeListEntry.getWatchStatus(),
-                userAnimeListEntry.getEpisodesCompleted()
-        )).toList();
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
 
+        Page<UserAnimeListEntry> userAnimeListEntries = userAnimeListEntryRepository.findByApplicationUser(applicationUser, pageable);
+        List<UserAnimeListEntry> listOfEntries = userAnimeListEntries.getContent();
+        List<UserAnimeListEntryDTO> content = listOfEntries.stream().map(userAnimeListEntry -> mapToDto(userAnimeListEntry)).toList();
+
+        UserAnimeListEntryPagination userAnimeListEntryPagination = new UserAnimeListEntryPagination();
+        userAnimeListEntryPagination.setContent(content);
+        userAnimeListEntryPagination.setPageNo(userAnimeListEntries.getNumber());
+        userAnimeListEntryPagination.setPageSize(userAnimeListEntries.getSize());
+        userAnimeListEntryPagination.setTotalElements(userAnimeListEntries.getTotalElements());
+        userAnimeListEntryPagination.setTotalPages(userAnimeListEntries.getTotalPages());
+        userAnimeListEntryPagination.setLast(userAnimeListEntries.isLast());
+        return userAnimeListEntryPagination;
+
+    }
+
+
+    private UserAnimeListEntryDTO mapToDto(UserAnimeListEntry userAnimeListEntry) {
+        UserAnimeListEntryDTO userAnimeListEntryDTO = new UserAnimeListEntryDTO();
+        userAnimeListEntryDTO.setId(userAnimeListEntry.getId());
+        userAnimeListEntryDTO.setAnime(new AnimeDTO(userAnimeListEntry.getAnime().getTitle()));
+        userAnimeListEntryDTO.setWatchStatus(userAnimeListEntry.getWatchStatus());
+        userAnimeListEntryDTO.setEpisodesCompleted(userAnimeListEntry.getEpisodesCompleted());
+        return userAnimeListEntryDTO;
     }
 
     // Get details of a specific anime (animeId) from the user's list (userId)
@@ -73,7 +119,7 @@ public class UserAnimeListEntryServiceImpl implements UserAnimeListEntryService 
 
         return new UserAnimeListEntryDTO(
                 userAnimeListEntry.getId(),
-                new AnimeDTO(userAnimeListOptional.get().getAnime().getId(), userAnimeListOptional.get().getAnime().getTitle()),
+                new AnimeDTO(userAnimeListOptional.get().getAnime().getTitle()),
                 userAnimeListOptional.get().getWatchStatus(),
                 userAnimeListOptional.get().getEpisodesCompleted()
         );
